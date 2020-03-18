@@ -1,19 +1,50 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import TipoScreen from "./screens/TipoScreen";
+import MontadoraScreen from "./screens/MontadoraScreen";
+import DetalhesScreen from "./screens/DetalhesScreen";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#f4511e"
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+            textTransform: "capitalize"
+          }
+        }}
+      >
+        <Stack.Screen
+          name="selTipo"
+          component={TipoScreen}
+          options={{ title: "TECNOMOTOR" }}
+        />
+        <Stack.Screen
+          name="selMontadora"
+          component={MontadoraScreen}
+          options={({ route }) => ({
+            title: route.params.tipo
+          })}
+        />
+        <Stack.Screen
+          name="detalhes"
+          component={DetalhesScreen}
+          options={({ route }) => ({
+            title: route.params.montadora
+          })}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
