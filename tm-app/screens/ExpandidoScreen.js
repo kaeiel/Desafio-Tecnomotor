@@ -1,12 +1,20 @@
 import React, { useReducer } from "react";
-import { StyleSheet, View, Text, Button, Alert } from "react-native";
+import { StyleSheet, View, Text, Button, AsyncStorage } from "react-native";
 
 import ItemLista from "../components/ItemLista";
-import { SAVEDITEM_KEY as PERSISTENCE_KEY } from "../constants/persistenceKeys";
+import { SAVEDITEM_KEY } from "../constants/persistenceKeys";
 
 const ExpandidoScreen = ({ navigation, route }) => {
   const { dados } = route.params;
 
+  const addButtonHandler = item => {
+    AsyncStorage.removeItem(SAVEDITEM_KEY);
+    setTimeout(
+      () => AsyncStorage.setItem(SAVEDITEM_KEY, JSON.stringify(item)),
+      10
+    );
+    navigation.popToTop();
+  };
   return (
     <View style={styles.screen}>
       <View style={styles.listContainer}>
@@ -19,10 +27,7 @@ const ExpandidoScreen = ({ navigation, route }) => {
           <Text style={styles.texto}>Sistema: {dados.sistema.nome}</Text>
         </ItemLista>
         <View>
-          <Button
-            title="Adicionar"
-            onPress={() => {}}
-          />
+          <Button title="Adicionar" onPress={() => addButtonHandler(dados)} />
         </View>
       </View>
     </View>

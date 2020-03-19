@@ -1,48 +1,102 @@
-import React, { useLayoutEffect } from "react";
-import { StyleSheet, View, Button, Text, FlatList } from "react-native";
+import React, { useLayoutEffect, useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Button,
+  Text,
+  FlatList,
+  AsyncStorage,
+  ActivityIndicator
+} from "react-native";
 
 import ItemLista from "../components/ItemLista";
-import Colors from "../constants/colors"
+import Colors from "../constants/colors";
+import { SAVEDITEM_KEY } from "../constants/persistenceKeys";
 
 const HomeScreen = ({ navigation }) => {
+  const [tudoPronto, setTudoPronto] = useState(false);
+  const [itemSalvo, setItemSalvo] = useState(null);
+  // const [itemPronto, setItemPronto] = useState(false);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button
-          onPress={() => navigation.navigate("selTipo")}
-          title="Adicionar"
-          color = {Colors.button}
-        />
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={() => navigation.navigate("selTipo")}
+            title="Adicionar"
+            color={Colors.button}
+          />
+        </View>
       )
     });
   }, [navigation]);
 
-  return (
-    <View style={styles.screen}>
-      {/* <View style={styles.listContainer}>
-        <FlatList
-          keyExtractor={(item, index) => item.id}
-          data={lista}
-          renderItem={itemData => (
-            <ItemLista id={itemData.item.id} onSelect={() => {}}>
-              <Text style={styles.texto}>
-                Montadora: {itemData.item.montadora.nome}
-              </Text>
-              <Text style={styles.texto}>
-                Veículo: {itemData.item.veiculo.nome}
-              </Text>
-              <Text style={styles.texto}>
-                Motorização: {itemData.item.motorizacao.nome}
-              </Text>
-              <Text style={styles.texto}>
-                Sistema: {itemData.item.sistema.nome}
-              </Text>
-            </ItemLista>
-          )}
-        />
-      </View> */}
-    </View>
-  );
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      if (!tudoPronto) {
+        setTimeout(() => {
+          recItensSalvos();
+        }, 500);
+      }
+    });
+    return () => {};
+  }, [navigation, tudoPronto]);
+
+  const recItensSalvos = async () => {
+    try {
+      const savedItemString = await AsyncStorage.getItem(SAVEDITEM_KEY);
+      const savedItem = JSON.parse(savedItemString);
+      if (savedItem !== null) {
+        setItemSalvo(savedItem);
+      } else {
+        setItemSalvo(null);
+      }
+    } finally {
+      setTudoPronto(true);
+    }
+  };
+
+  const buttonHandler = () => {
+    AsyncStorage.removeItem(SAVEDITEM_KEY);
+    setItemSalvo(null);
+  };
+
+  if (!tudoPronto) {
+    return (
+      <View style={{ ...styles.screen, justifyContent: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (!itemSalvo) {
+    return <View style={styles.screen}></View>;
+  } else {
+    return (
+      <View style={styles.screen}>
+        <View style={styles.listContainer}>
+          <ItemLista id={itemSalvo.id} onSelect={() => {}}>
+            <Text style={styles.texto}>
+              Montadora: {itemSalvo.montadora.nome}
+            </Text>
+            <Text style={styles.texto}>Veículo: {itemSalvo.veiculo.nome}</Text>
+            <Text style={styles.texto}>
+              Motorização: {itemSalvo.motorizacao.nome}
+            </Text>
+            <Text style={styles.texto}>Sistema: {itemSalvo.sistema.nome}</Text>
+          </ItemLista>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={buttonHandler}
+            title="Limpar"
+            color={Colors.perigo}
+          />
+        </View>
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -62,7 +116,8 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   buttonContainer: {
-    width: 110
+    width: 110,
+    marginRight: 10
   }
 });
 

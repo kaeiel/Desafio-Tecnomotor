@@ -11,7 +11,7 @@ import DetalhesScreen from "./screens/DetalhesScreen";
 import ExpandidoScreen from "./screens/ExpandidoScreen";
 
 import Colors from "./constants/colors";
-import { NAVIGATION_KEY as PERSISTENCE_KEY } from "./constants/persistenceKeys";
+import { NAVIGATION_KEY } from "./constants/persistenceKeys";
 
 const Stack = createStackNavigator();
 
@@ -22,7 +22,7 @@ export default function App() {
   useEffect(() => {
     const restoreState = async () => {
       try {
-        const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
+        const savedStateString = await AsyncStorage.getItem(NAVIGATION_KEY);
         const state = JSON.parse(savedStateString);
 
         setInitialState(state);
@@ -48,7 +48,7 @@ export default function App() {
     <NavigationContainer
       initialState={initialState}
       onStateChange={state =>
-        AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+        AsyncStorage.setItem(NAVIGATION_KEY, JSON.stringify(state))
       }
     >
       <Stack.Navigator

@@ -17,7 +17,7 @@ import ItemLista from "../components/ItemLista";
 //   return respTipos;
 // };
 
-const TipoScreen = ({ navigation }) => {
+const TipoScreen = ({ navigation, route }) => {
   // State hooks
   const [tipos, setTipos] = useState([]);
   const [tudoPronto, setTudoPronto] = useState(false);
@@ -84,7 +84,9 @@ const TipoScreen = ({ navigation }) => {
 
   const selTipoHandler = tipoId => {
     const tipoSelecionado = tipos.filter(tipo => tipo.id === tipoId)[0];
-    navigation.navigate("selMontadora", { tipo: tipoSelecionado.tipo });
+    navigation.navigate("selMontadora", {
+      tipo: tipoSelecionado.tipo
+    });
   };
 
   return (
