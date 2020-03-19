@@ -51,7 +51,7 @@ const DetalhesScreen = ({ navigation, route }) => {
       detalhe => detalhe.id === detalheId
     )[0];
     navigation.navigate("expandido", {
-      dadosAPI: detalheSelecionado
+      dados: detalheSelecionado
     });
   };
 

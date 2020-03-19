@@ -1,39 +1,28 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import React, { useReducer } from "react";
+import { StyleSheet, View, Text, Button, Alert } from "react-native";
 
 import ItemLista from "../components/ItemLista";
 
 const ExpandidoScreen = ({ navigation, route }) => {
-  const { dadosAPI } = route.params;
-  const content = dados => {
-    const textConstructor = (nome, checkVar) => {
-      if (typeof checkVar !== "undefined" && checkVar !== null && checkVar !== "") {
-        return (
-          <Text style={styles.texto}>
-            {nome}: {checkVar}
-          </Text>
-        );
-      } else {
-        return;
-      }
-    };
-    return (
-      <View>
-        {textConstructor("Montadora", dados.montadora.nome)}
-        {textConstructor("Veículo", dados.veiculo.nome)}
-        {textConstructor("Motorização", dados.motorizacao.nome)}
-        {textConstructor("Sistema", dados.sistema.nome)}
-        {textConstructor("Ano inicial", dados.anoInicial)}
-        {textConstructor("Ano Final", dados.anoFinal)}
-      </View>
-    );
-  };
+  const { dados } = route.params;
+
   return (
     <View style={styles.screen}>
       <View style={styles.listContainer}>
-        <ItemLista id={dadosAPI.id} onSelect={() => {}}>
-          {content(dadosAPI)}
+        <ItemLista id={dados.id} onSelect={() => {}}>
+          <Text style={styles.texto}>Montadora: {dados.montadora.nome}</Text>
+          <Text style={styles.texto}>Veículo: {dados.veiculo.nome}</Text>
+          <Text style={styles.texto}>
+            Motorização: {dados.motorizacao.nome}
+          </Text>
+          <Text style={styles.texto}>Sistema: {dados.sistema.nome}</Text>
         </ItemLista>
+        <View>
+          <Button
+            title="Adicionar"
+            onPress={() => {}}
+          />
+        </View>
       </View>
     </View>
   );
