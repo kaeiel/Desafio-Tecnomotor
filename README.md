@@ -30,3 +30,10 @@ Funcionalidades básicas:
 Salvando uma seleção e o estado do app (tela atual)
 
 ![](https://media.giphy.com/media/KbMkGx99e3CdBXlxl0/giphy.gif)
+
+## TODO
+- Implementar testes automatizados;
+- Salvar mais de uma seleção na tela inicial;
+- Exportar a apk do aplicativo;
+
+## Opinião sobre o projeto
