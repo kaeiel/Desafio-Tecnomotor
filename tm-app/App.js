@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { AsyncStorage } from "react-native";
+import React, { useState, useEffect } from "react";
+import { AsyncStorage, ActivityIndicator, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -10,13 +10,47 @@ import MontadoraScreen from "./screens/MontadoraScreen";
 import DetalhesScreen from "./screens/DetalhesScreen";
 import ExpandidoScreen from "./screens/ExpandidoScreen";
 
-import Colors from "./constants/colors"
+import Colors from "./constants/colors";
+import { NAVIGATION_KEY as PERSISTENCE_KEY } from "./constants/persistenceKeys";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [tudoPronto, setTudoPronto] = useState(false);
+  const [initialState, setInitialState] = useState();
+
+  useEffect(() => {
+    const restoreState = async () => {
+      try {
+        const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
+        const state = JSON.parse(savedStateString);
+
+        setInitialState(state);
+      } finally {
+        setTudoPronto(true);
+      }
+    };
+
+    if (!tudoPronto) {
+      restoreState();
+    }
+  }, [tudoPronto]);
+
+  if (!tudoPronto) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      initialState={initialState}
+      onStateChange={state =>
+        AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+      }
+    >
       <Stack.Navigator
         initialRouteName="home"
         screenOptions={{

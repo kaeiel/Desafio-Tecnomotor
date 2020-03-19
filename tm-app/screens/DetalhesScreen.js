@@ -1,50 +1,99 @@
-import React, { useState } from "react";
-import { StyleSheet, View, FlatList, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Text,
+  ActivityIndicator
+} from "react-native";
 
 import ItemLista from "../components/ItemLista";
 
-// Requisição GET para a API retornando uma promessa de objeto JSON
-const apiGeDetalhes = (tipo, idMontadora) => {
-  let respDetalhes = fetch(
-    `https://service.tecnomotor.com.br/iRasther/aplicacao?pm.platform=1&pm.version=17&pm.type=${tipo}&pm.assemblers=${idMontadora}&pm.pageIndex=0&pm.pageSize=10`
-  ).then(resp => resp.json());
-  return respDetalhes;
-};
+// // Requisição GET para a API retornando uma promessa de objeto JSON
+// const apiGeDetalhes = (tipo, idMontadora) => {
+//   let respDetalhes = fetch(
+//     `https://service.tecnomotor.com.br/iRasther/aplicacao?pm.platform=1&pm.version=17&pm.type=${tipo}&pm.assemblers=${idMontadora}&pm.pageIndex=0&pm.pageSize=10`
+//   ).then(resp => resp.json());
+//   return respDetalhes;
+// };
 
 const DetalhesScreen = ({ navigation, route }) => {
   const { tipo } = route.params;
   const { idMontadora } = route.params;
   // State hooks
   const [detalhes, setDetalhes] = useState([]);
-  const [gotDetalhes, setGotDetalhes] = useState(false);
+  const [tudoPronto, setTudoPronto] = useState(false);
 
-  // Se a requisição falhou ou ainda não aconteceu, então uma nova requisição ocorre
-  // Se a resolução da promessa ocorre sem erros, o estado 'detalhes' é atualizado
-  if (!gotDetalhes) {
-    setGotDetalhes(true);
-    apiGeDetalhes(tipo, idMontadora)
-      .then(response => response[Object.keys(response)])
-      .then(response =>
-        response.forEach(resp => {
-          setDetalhes(detalhesAtuais => {
-            return [
-              ...detalhesAtuais,
-              {
+  useEffect(() => {
+    const apiGetDetalhes = async () => {
+      try {
+        const respDetalhes = await fetch(
+          `https://service.tecnomotor.com.br/iRasther/aplicacao?pm.platform=1&pm.version=17&pm.type=${tipo}&pm.assemblers=${idMontadora}&pm.pageIndex=0&pm.pageSize=10`
+        )
+          .then(resp => resp.json())
+          .then(response => response[Object.keys(response)])
+          .then(resp =>
+            resp.map(resp => {
+              return {
                 veiculo: { nome: "" },
                 motorizacao: { nome: "" },
                 sistema: { nome: "" },
                 ...resp,
                 id: resp.id.toString()
-              }
-            ];
+              };
+            })
+          )
+          .catch(err => {
+            setTudoPronto(false);
+            console.error(`[ERRO] API GET Detalhes - ${err}`);
           });
-        })
-      )
-      .catch(err => {
-        setGotDetalhes(false);
-        console.error(`[ERRO] API GET Detalhes - ${err}`);
-      });
+        setDetalhes(respDetalhes);
+      } finally {
+        setTudoPronto(true);
+      }
+    };
+
+    if (!tudoPronto) {
+      apiGetDetalhes();
+    }
+  }, [tudoPronto]);
+
+  if (!tudoPronto) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.title}>Selecione um item</Text>
+        <ActivityIndicator />
+      </View>
+    );
   }
+
+  // // Se a requisição falhou ou ainda não aconteceu, então uma nova requisição ocorre
+  // // Se a resolução da promessa ocorre sem erros, o estado 'detalhes' é atualizado
+  // if (!gotDetalhes) {
+  //   setGotDetalhes(true);
+  //   apiGeDetalhes(tipo, idMontadora)
+  //     .then(response => response[Object.keys(response)])
+  //     .then(response =>
+  //       response.forEach(resp => {
+  //         setDetalhes(detalhesAtuais => {
+  //           return [
+  //             ...detalhesAtuais,
+  //             {
+  //               veiculo: { nome: "" },
+  //               motorizacao: { nome: "" },
+  //               sistema: { nome: "" },
+  //               ...resp,
+  //               id: resp.id.toString()
+  //             }
+  //           ];
+  //         });
+  //       })
+  //     )
+  //     .catch(err => {
+  //       setGotDetalhes(false);
+  //       console.error(`[ERRO] API GET Detalhes - ${err}`);
+  //     });
+  // }
 
   const selDetalheHandler = detalheId => {
     let detalheSelecionado = detalhes.filter(
@@ -57,6 +106,7 @@ const DetalhesScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.screen}>
+      <Text style={styles.title}>Selecione um item</Text>
       <View style={styles.listContainer}>
         <FlatList
           keyExtractor={(item, index) => item.id}

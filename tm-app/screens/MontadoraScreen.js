@@ -1,39 +1,75 @@
-import React, { useState } from "react";
-import { StyleSheet, View, FlatList, Text } from "react-native";
+import React, { useState, useEffect} from "react";
+import { StyleSheet, View, FlatList, Text, ActivityIndicator } from "react-native";
 
 import ItemLista from "../components/ItemLista";
 
-// Requisição GET para a API retornando uma promessa de objeto JSON
-const apiGetMontadoras = tipo => {
-  let respMontadoras = fetch(
-    `https://service.tecnomotor.com.br/iRasther/montadora?pm.type=${tipo}`
-  ).then(resp => resp.json());
-  return respMontadoras;
-};
+// // Requisição GET para a API retornando uma promessa de objeto JSON
+// const apiGetMontadoras = tipo => {
+//   let respMontadoras = fetch(
+//     `https://service.tecnomotor.com.br/iRasther/montadora?pm.type=${tipo}`
+//   ).then(resp => resp.json());
+//   return respMontadoras;
+// };
 
 const MontadoraScreen = ({ navigation, route }) => {
   const { tipo } = route.params;
   // State hooks
   const [montadoras, setMontadoras] = useState([]);
-  const [gotMontadoras, setGotMontadoras] = useState(false);
+  const [tudoPronto, setTudoPronto] = useState(false);
 
-  // Se a requisição falhou ou ainda não aconteceu, então uma nova requisição ocorre
-  // Se a resolução da promessa ocorre sem erros, o estado 'montadoras' é atualizado
-  if (!gotMontadoras) {
-    setGotMontadoras(true);
-    apiGetMontadoras(tipo)
-      .then(response => {
-        response.forEach(resp => {
-          setMontadoras(montadorasAtuais => {
-            return [...montadorasAtuais, { ...resp, id: resp.id.toString() }];
+  useEffect(() => {
+    const apiGetMontadoras = async () => {
+      try {
+        const respMontadoras = await fetch(
+          `https://service.tecnomotor.com.br/iRasther/montadora?pm.type=${tipo}`
+        )
+          .then(resp => resp.json())
+          .then(resp =>
+            resp.map(resp => {
+              return { ...resp, id: resp.id.toString() };
+            })
+          )
+          .catch(err => {
+            setTudoPronto(false);
+            console.error(`[ERRO] API GET Montadora - ${err}`);
           });
-        });
-      })
-      .catch(err => {
-        setGotMontadoras(false);
-        console.error(`[ERRO] API GET Montadoras - ${err}`);
-      });
+        setMontadoras(respMontadoras);
+      } finally {
+        setTudoPronto(true);
+      }
+    };
+
+    if (!tudoPronto) {
+      apiGetMontadoras();
+    }
+  }, [tudoPronto]);
+
+  if (!tudoPronto) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.title}>Selecione uma montadora</Text>
+        <ActivityIndicator />
+      </View>
+    );
   }
+
+  // // Se a requisição falhou ou ainda não aconteceu, então uma nova requisição ocorre
+  // // Se a resolução da promessa ocorre sem erros, o estado 'montadoras' é atualizado
+  // if (!gotMontadoras) {
+  //   setGotMontadoras(true);
+  //   apiGetMontadoras(tipo)
+  //     .then(response => {
+  //       response.forEach(resp => {
+  //         setMontadoras(montadorasAtuais => {
+  //           return [...montadorasAtuais, { ...resp, id: resp.id.toString() }];
+  //         });
+  //       });
+  //     })
+  //     .catch(err => {
+  //       setGotMontadoras(false);
+  //       console.error(`[ERRO] API GET Montadoras - ${err}`);
+  //     });
+  // }
 
   const selMontadoraHandler = montadoraId => {
     let montadoraSelecionada = montadoras.filter(

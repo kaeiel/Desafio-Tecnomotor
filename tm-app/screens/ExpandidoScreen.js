@@ -2,6 +2,7 @@ import React, { useReducer } from "react";
 import { StyleSheet, View, Text, Button, Alert } from "react-native";
 
 import ItemLista from "../components/ItemLista";
+import { SAVEDITEM_KEY as PERSISTENCE_KEY } from "../constants/persistenceKeys";
 
 const ExpandidoScreen = ({ navigation, route }) => {
   const { dados } = route.params;
