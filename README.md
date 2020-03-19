@@ -24,7 +24,9 @@ yarn add @react-navigation/stack
 
 ## App em execução
 Funcionalidades básicas:
+
 ![](https://media.giphy.com/media/LMEiOQL53mfbVk5BUy/giphy.gif)
 
 Salvando uma seleção e o estado do app (tela atual)
+
 ![](https://media.giphy.com/media/KbMkGx99e3CdBXlxl0/giphy.gif)
