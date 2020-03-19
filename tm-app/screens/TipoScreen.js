@@ -54,7 +54,7 @@ const TipoScreen = ({ navigation }) => {
           data={tipos}
           renderItem={itemData => (
             <ItemLista id={itemData.item.id} onSelect={selTipoHandler}>
-              <Text style={{ fontSize: 15 }}>{itemData.item.tipo}</Text>
+              <Text style={styles.texto}>{itemData.item.tipo}</Text>
             </ItemLista>
           )}
         />
@@ -72,6 +72,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10
+  },
+  texto: {
+    fontSize: 15
   },
   listContainer: {
     width: "100%"

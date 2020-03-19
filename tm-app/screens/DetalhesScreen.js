@@ -3,13 +3,6 @@ import { StyleSheet, View, FlatList, Text } from "react-native";
 
 import ItemLista from "../components/ItemLista";
 
-// Gerador de UUID
-const uuid = () => {
-  const S4 = () =>
-    (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
-};
-
 // Requisição GET para a API retornando uma promessa de objeto JSON
 const apiGeDetalhes = (tipo, idMontadora) => {
   let respDetalhes = fetch(
@@ -52,6 +45,16 @@ const DetalhesScreen = ({ navigation, route }) => {
         console.error(`[ERRO] API GET Detalhes - ${err}`);
       });
   }
+
+  const selDetalheHandler = detalheId => {
+    let detalheSelecionado = detalhes.filter(
+      detalhe => detalhe.id === detalheId
+    )[0];
+    navigation.navigate("expandido", {
+      dadosAPI: detalheSelecionado
+    });
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.listContainer}>
@@ -59,14 +62,14 @@ const DetalhesScreen = ({ navigation, route }) => {
           keyExtractor={(item, index) => item.id}
           data={detalhes}
           renderItem={itemData => (
-            <ItemLista id={itemData.item.id} onSelect={() => {}}>
-              <Text style={{ fontSize: 15 }}>
+            <ItemLista id={itemData.item.id} onSelect={selDetalheHandler}>
+              <Text style={styles.texto}>
                 Veículo: {itemData.item.veiculo.nome}
               </Text>
-              <Text style={{ fontSize: 15 }}>
+              <Text style={styles.texto}>
                 Motorização: {itemData.item.motorizacao.nome}
               </Text>
-              <Text style={{ fontSize: 15 }}>
+              <Text style={styles.texto}>
                 Sistema: {itemData.item.sistema.nome}
               </Text>
             </ItemLista>
@@ -86,6 +89,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10
+  },
+  texto: {
+    fontSize: 15
   },
   listContainer: {
     width: "100%"

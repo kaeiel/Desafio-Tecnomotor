@@ -55,7 +55,7 @@ const MontadoraScreen = ({ navigation, route }) => {
           data={montadoras}
           renderItem={itemData => (
             <ItemLista id={itemData.item.id} onSelect={selMontadoraHandler}>
-              <Text style={{ fontSize: 15 }}>{itemData.item.nome}</Text>
+              <Text style={styles.texto}>{itemData.item.nome}</Text>
             </ItemLista>
           )}
         />
@@ -73,6 +73,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10
+  },
+  texto: {
+    fontSize: 15
   },
   listContainer: {
     width: "100%"

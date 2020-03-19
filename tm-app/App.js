@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AsyncStorage } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -6,6 +7,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import TipoScreen from "./screens/TipoScreen";
 import MontadoraScreen from "./screens/MontadoraScreen";
 import DetalhesScreen from "./screens/DetalhesScreen";
+import ExpandidoScreen from "./screens/ExpandidoScreen";
+
 
 const Stack = createStackNavigator();
 
@@ -42,6 +45,13 @@ export default function App() {
           component={DetalhesScreen}
           options={({ route }) => ({
             title: route.params.montadora
+          })}
+        />
+        <Stack.Screen
+          name="expandido"
+          component={ExpandidoScreen}
+          options={({ route }) => ({
+            title: route.params.dadosAPI.veiculo.nome
           })}
         />
       </Stack.Navigator>
