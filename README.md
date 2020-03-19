@@ -35,5 +35,3 @@ Salvando uma seleção e o estado do app (tela atual)
 - Implementar testes automatizados;
 - Salvar mais de uma seleção na tela inicial;
 - Exportar a apk do aplicativo;
-
-## Opinião sobre o projeto
