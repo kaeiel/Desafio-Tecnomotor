@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button, AsyncStorage } from "react-native";
 
 import ItemLista from "../components/ItemLista";
 import { SAVEDITEM_KEY } from "../constants/persistenceKeys";
+import Colors from "../constants/colors"
 
 const ExpandidoScreen = ({ navigation, route }) => {
   const { dados } = route.params;
@@ -27,7 +28,11 @@ const ExpandidoScreen = ({ navigation, route }) => {
           <Text style={styles.texto}>Sistema: {dados.sistema.nome}</Text>
         </ItemLista>
         <View>
-          <Button title="Adicionar" onPress={() => addButtonHandler(dados)} />
+          <Button
+            title="Adicionar"
+            onPress={() => addButtonHandler(dados)}
+            color={Colors.button}
+          />
         </View>
       </View>
     </View>
